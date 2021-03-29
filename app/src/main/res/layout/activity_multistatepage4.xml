@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.huangxy.multistatepage.MultiStatePageManager
+        android:id="@+id/pagemanager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:inject_view="@layout/layout_preview"
+        app:loading_view="@layout/layout_placeholder"
+        app:empty_view="@layout/layout_empty"
+        app:error_view="@layout/layout_error"
+        app:show_loading="true" />
+
+</RelativeLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MultiStatePageManager">
+        <attr name="inject_view" format="reference"></attr>
+        <attr name="loading_view" format="reference"></attr>
+        <attr name="empty_view" format="reference"></attr>
+        <attr name="error_view" format="reference"></attr>
+        <attr name="show_loading" format="boolean"></attr>
+    </declare-styleable>
+</resources>
