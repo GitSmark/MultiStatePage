@@ -9,6 +9,8 @@ import androidx.annotation.LayoutRes;
  */
 public class MultiStatePageConfig {
 
+    private bindMultiState.Convertor convertor; //状态转换器
+
     @LayoutRes
     private int loading_LayoutRes = R.layout.layout_loading;
     @LayoutRes
@@ -22,6 +24,15 @@ public class MultiStatePageConfig {
 
     //初始状态是否显示加载状态
     private boolean showLoading = false;
+
+    public bindMultiState.Convertor getConvertor() {
+        return convertor;
+    }
+
+    public MultiStatePageConfig addConverterFactory(bindMultiState.Convertor convertor) {
+        this.convertor = convertor;
+        return this;
+    }
 
     public MultiStatePageConfig loadingView(@LayoutRes int layoutResID) {
         loading_LayoutRes = layoutResID;

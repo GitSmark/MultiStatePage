@@ -34,6 +34,10 @@ public class MultiStatePage4 extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> pageManager.success(), 800);
+        new Handler().postDelayed(() -> {
+            pageManager.show(200, "请求成功");
+            //pageManager.show(211, "暂无数据");
+            //pageManager.show(500, "请求失败");
+        }, 800);
     }
 }

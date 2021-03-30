@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.huangxy.multistatepage.MultiStatePageManager;
+import com.huangxy.multistatepage.bindMultiState;
 import com.huangxy.multistatepage.sample.R;
 
 public class MultiStatePage3 extends AppCompatActivity implements View.OnClickListener {
@@ -54,15 +55,19 @@ public class MultiStatePage3 extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn1:
+                //pageManager.show(bindMultiState.LOADING);
                 pageManager.loading();
                 break;
             case R.id.btn2:
+                //pageManager.show(bindMultiState.SUCCESS);
                 pageManager.success();
                 break;
             case R.id.btn3:
+                //pageManager.show(bindMultiState.EMPTY);
                 pageManager.empty();
                 break;
             case R.id.btn4:
+                //pageManager.show(bindMultiState.ERROR);
                 pageManager.error();
                 break;
             default:

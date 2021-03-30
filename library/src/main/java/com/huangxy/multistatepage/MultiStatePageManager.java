@@ -3,6 +3,7 @@ package com.huangxy.multistatepage;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -98,7 +99,10 @@ public class MultiStatePageManager extends RelativeLayout {
         if (loadingView == null) loadingView = layoutInflater.inflate(getConfig().getLoadingLayoutRes(), null);
         if (emptyView == null) emptyView = layoutInflater.inflate(getConfig().getEmptyLayoutRes(), null);
         if (errorView == null) errorView = layoutInflater.inflate(getConfig().getErrorLayoutRes(), null);
-        if (showLoading) loading(); else success(); addListener(emptyView); addListener(errorView);
+
+        addListener(emptyView); addListener(errorView);
+
+        //if (showLoading) loading(); else success();
     }
 
     private void addListener(View view) {
@@ -116,6 +120,22 @@ public class MultiStatePageManager extends RelativeLayout {
                 });
             }
         }
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+
+        //支持xml直接嵌套，优先级别低于app:inject_view="@LayoutRes"
+        if (getInjectView() == null && getChildCount() > 0) {
+            if (getChildCount() == 1) { //只允许有一个子节点（允许一个父子节点包含多个子节点）
+                contentView = getChildAt(0);
+            } else {
+                throw new IllegalStateException(getClass().getSimpleName() + " can host only one direct child");
+            }
+        }
+
+        if (showLoading) loading(); else success();
     }
 
     /**
@@ -320,34 +340,68 @@ public class MultiStatePageManager extends RelativeLayout {
 
     //加载状态框
     public void showLoadingDialog() {
-        MultiStatePageDialog.showLoadingDialog(getContext());
+        doInMainThread(() -> MultiStatePageDialog.showLoadingDialog(getContext()));
     }
 
     public void showLoadingDialog(String prompt) {
-        MultiStatePageDialog.showLoadingDialog(getContext(), prompt);
+        doInMainThread(() -> MultiStatePageDialog.showLoadingDialog(getContext(), prompt));
     }
 
     //成功提示框
     public void showSuccessDialog() {
-        MultiStatePageDialog.showSuccessDialog(getContext());
+        doInMainThread(() -> MultiStatePageDialog.showSuccessDialog(getContext()));
     }
 
     public void showSuccessDialog(String prompt) {
-        MultiStatePageDialog.showSuccessDialog(getContext(), prompt);
+        doInMainThread(() -> MultiStatePageDialog.showSuccessDialog(getContext(), prompt));
     }
 
     //失败提示框
     public void showFailDialog() {
-        MultiStatePageDialog.showFailDialog(getContext());
+        doInMainThread(() -> MultiStatePageDialog.showFailDialog(getContext()));
     }
 
     public void showFailDialog(String prompt) {
-        MultiStatePageDialog.showFailDialog(getContext(), prompt);
+        doInMainThread(() -> MultiStatePageDialog.showFailDialog(getContext(), prompt));
     }
 
     //关闭提示框
     public void hideDialog() {
-        MultiStatePageDialog.hide();
+        doInMainThread(MultiStatePageDialog::hide);
+    }
+
+    public void show(int code, String message) {
+        bindMultiState.Convertor convertor = getConfig().getConvertor();
+        if (convertor != null) {
+            int state = convertor.convert(code);
+            if (state == bindMultiState.EMPTY) {
+                setEmptyText(message);
+            } else
+            if (state == bindMultiState.ERROR) {
+                setErrorText(message);
+            }
+            show(state);
+        }
+    }
+
+    @Deprecated
+    public void show(int state) {
+        switch (state) {
+            case bindMultiState.LOADING:
+                loading();
+                break;
+            case bindMultiState.SUCCESS:
+                success();
+                break;
+            case bindMultiState.EMPTY:
+                empty();
+                break;
+            case bindMultiState.ERROR:
+                error();
+                break;
+            default:
+                break;
+        }
     }
 
     //加载中
@@ -400,11 +454,15 @@ public class MultiStatePageManager extends RelativeLayout {
 
     //其它状态
     public void showView(@LayoutRes int layoutResID) {
-        View view = LayoutInflater.from(getContext()).inflate(layoutResID, null);
-        showView(view);
+        View child = LayoutInflater.from(getContext()).inflate(layoutResID, null);
+        doInMainThread(() -> alterView(child));
     }
 
-    public void showView(View child) {
+    public void showView(final View child) {
+        doInMainThread(() -> alterView(child));
+    }
+
+    private void alterView(View child) {
         try {
             if (child != null) {
                 if (child.getParent() != null) {
@@ -420,6 +478,14 @@ public class MultiStatePageManager extends RelativeLayout {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void doInMainThread(Runnable R) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            post(() -> R.run());
+        } else {
+            R.run();
         }
     }
 

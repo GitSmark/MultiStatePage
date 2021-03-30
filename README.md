@@ -17,19 +17,20 @@
   ```
 2. 然后在app的build.gradle文件中添加以下依赖
   ```
-  implementation 'com.github.GitSmark:MultiStatePage:1.1.0'
+  implementation 'com.github.GitSmark:MultiStatePage:1.2.0'
   ```
 
 用法介绍
 -----
   
-1. 可以在Application中设置全局配置，更多使用方法详见 `MultiStatePageConfig`
+1. 可以在Application中设置全局配置，如果不想每次回调都要手动进行的话，可以加入转换器，根据接口返回的响应状态码，自动适配对应的状态页，更多使用方法详见 `MultiStatePageConfig`
   ```java
   @Override
   public void onCreate() {
       super.onCreate();
 
       MultiStatePageManager.Config()
+          //.addConverterFactory(this)
           .loadingView(R.layout.layout_loading)
           .emptyView(R.layout.layout_empty)
           .errorView(R.layout.layout_error)
@@ -66,6 +67,9 @@
       return pageManager;
   }
   ```
+
+  注意：因为实现原理的问题，如果要注入RelativeLayout或ConstraintLayout的子View，若该子View与父Layout或其它子View存在约束关系，则需要在该View外层再包一层布局（或者直接使用xml注入，支持直接嵌套使用），避免注入后可能出现布局错乱等情况。
+
 4. 常见用法，更多使用方法详见 `MultiStatePageManager`
   ```java
   //pageManager = MultiStatePageManager.inject(this, MultiStatePageConfig);
@@ -77,12 +81,14 @@
       }
   });
 
+  pageManager.show(200, "请求成功"); //状态转换器，自动适配
+
+  pageManager.showView(view); //其它状态，任意View
+
   pageManager.loading(); //加载中...
   pageManager.success(); //加载成功
   pageManager.error(); //加载失败
   pageManager.empty(); //无数据
-  
-  pageManager.showView(view); //其它状态，任意View
   
   ```
 5. 弹出框，更多使用方法详见 `MultiStatePageDialog`

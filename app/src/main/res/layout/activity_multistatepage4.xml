@@ -12,6 +12,28 @@
         app:loading_view="@layout/layout_placeholder"
         app:empty_view="@layout/layout_empty"
         app:error_view="@layout/layout_error"
-        app:show_loading="true" />
+        app:show_loading="true">
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/linear_layout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/image_view"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:src="@mipmap/ic_launcher" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/text_view"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Hello World!" />-->
+
+<!--        </LinearLayout>-->
+
+    </com.huangxy.multistatepage.MultiStatePageManager>
 
 </RelativeLayout>
